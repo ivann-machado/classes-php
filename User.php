@@ -13,7 +13,7 @@
 
 		public function register($login, $password, $email, $firstname, $lastname) {
 			$query = 'INSERT INTO `users` (`login`, `password`, `email`, `firstname`, `lastname`) VALUES ("'.htmlspecialchars($login).'", "'.password_hash($password, PASSWORD_BCRYPT).'", "'.htmlspecialchars($email).'", "'.htmlspecialchars($firstname).'", "'.htmlspecialchars($lastname).'")';
-			if (mysqli_query($db, $query) {
+			if (mysqli_query($db, $query)) {
 				return getAllInfos(mysqli_insert_id($db));
 			}
 		}
@@ -62,7 +62,8 @@
 			// code...
 		}
 
-		public function getAllInfos($id = $this->id) {
+		public function getAllInfos($id = null) {
+			$id = $id ?? $this->id;
 			$result = mysqli_query($db, 'SELECT * FROM `users` WHERE `id` = "'.htmlspecialchars($id).'"');
 			if (mysqli_num_rows($result) == 1) {
 				return mysqli_fetch_assoc($result);
@@ -70,8 +71,6 @@
 			else {
 				throw new Exception('User not found.');
 			}
-		}
-
 		}
 
 		public function getLogin() {
