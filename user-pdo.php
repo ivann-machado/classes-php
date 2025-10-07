@@ -10,7 +10,7 @@ class Userpdo {
 
 	public function __construct() {
 		try {
-			$dsn = "mysql:host=localhost;dbname=classes;charset=" . DB_CHARSET;
+			$dsn = "mysql:host=localhost;dbname=classes;charset=utf8mb4";
 			$options = [
 				PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 				PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
