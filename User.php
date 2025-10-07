@@ -28,7 +28,7 @@ class User {
 		else {
 			$query = 'INSERT INTO `utilisateurs` (`login`, `password`, `email`, `firstname`, `lastname`) VALUES ("'.htmlspecialchars($login).'", "'.password_hash($password, PASSWORD_BCRYPT).'", "'.htmlspecialchars($email).'", "'.htmlspecialchars($firstname).'", "'.htmlspecialchars($lastname).'")';
 			if (mysqli_query($this->db, $query)) {
-				return getAllInfos(mysqli_insert_id($this->db));
+				return $this->getAllInfos(mysqli_insert_id($this->db));
 			}
 		}
 	}
