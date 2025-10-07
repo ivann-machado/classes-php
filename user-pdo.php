@@ -94,8 +94,11 @@ class Userpdo {
 		return isset($this->id);
 	}
 
-	public function getAllInfos() {
-			// code...
+	public function getAllInfos($id = null) {
+		$id = $id ?? $this->id;
+		$stmt = $this->pdo->prepare('SELECT * FROM `utilisateurs` WHERE `id` = :id');
+		$stmt->execute(['id' => $id]);
+		return $stmt->fetch();
 	}
 
 	public function getLogin() {
