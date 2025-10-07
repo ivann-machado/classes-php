@@ -86,8 +86,45 @@ class Userpdo {
 		}
 	}
 
-	public function update($login, $password = null, $email = null, $firstname = null, $lastname = null) {
-			// code...
+	public function update($login = null, $password = null, $email = null, $firstname = null, $lastname = null) {
+		$fields = [];
+		$params = ['id' => $this->id];
+		if ($login !== null) {
+			$fields[] = '`login` = :login';
+			$params['login'] = htmlspecialchars($login);
+		}
+		if ($password !== null) {
+			$fields[] = '`password` = :password';
+			$params['password'] = password_hash($password, PASSWORD_BCRYPT);
+		}
+		if ($email !== null) {
+			$fields[] = '`email` = :email';
+			$params['email'] = htmlspecialchars($email);
+		}
+		if ($firstname !== null) {
+			$fields[] = '`firstname` = :firstname';
+			$params['firstname'] = htmlspecialchars($firstname);
+		}
+		if ($lastname !== null) {
+			$fields[] = '`lastname` = :lastname';
+			$params['lastname'] = htmlspecialchars($lastname);
+		}
+		if (empty($fields)) {
+			throw new Exception('No fields to update.');
+		}
+		$query = 'UPDATE `utilisateurs` SET ' . implode(', ', $fields) . ' WHERE `id` = :id';
+		$stmt = $this->pdo->prepare($query);
+		$result = $stmt->execute($params);
+		if ($result) {
+			$this->login = $login ?? $this->login;
+			$this->email = $email ?? $this->email;
+			$this->firstname = $firstname ?? $this->firstname;
+			$this->lastname = $lastname ?? $this->lastname;
+			return true;
+		} else {
+			throw new Exception('Update failed.');
+		}
+
 	}
 
 	public function isConnected() {
