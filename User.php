@@ -21,7 +21,7 @@ class User {
 	}
 
 	public function register($login, $password, $email, $firstname, $lastname) {
-		$result = mysqli_query($this->db, 'SELECT * FROM `users` WHERE `login` = "'.htmlspecialchars($login).'"');
+		$result = mysqli_query($this->db, 'SELECT * FROM `utilisateurs` WHERE `login` = "'.htmlspecialchars($login).'"');
 		if (mysqli_num_rows($result) > 0) {
 			throw new Exception('Login already taken.');
 		}
