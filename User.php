@@ -92,10 +92,11 @@ class User {
 		if (!empty($fields)) {
 			$query = 'UPDATE `utilisateurs` SET '.implode(', ', $fields).' WHERE `id` = "'.$this->id.'"';
 			if (mysqli_query($this->db, $query)) {
-				$this->login = $login;
-				$this->email = $email;
-				$this->firstname = $firstname;
-				$this->lastname = $lastname;
+				$this->login = $login ?? $this->login;
+				$this->email = $email ?? $this->email;
+				$this->firstname = $firstname ?? $this->firstname;
+				$this->lastname = $lastname ?? $this->lastname;
+				return true;
 			}
 		}
 	}
