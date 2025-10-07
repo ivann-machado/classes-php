@@ -66,7 +66,7 @@
 		}
 
 		public function isConnected() {
-			// code...
+			return isset($this->id);
 		}
 
 		public function getAllInfos($id = null) {
