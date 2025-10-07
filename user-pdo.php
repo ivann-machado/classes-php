@@ -30,15 +30,17 @@ class Userpdo {
 		}
 		else {
 			$stmt = $this->pdo->prepare('INSERT INTO `utilisateurs` (`login`, `password`, `email`, `firstname`, `lastname`) VALUES (:login, :password, :email, :firstname, :lastname)');
-			$result = $stmt->execute([
+			$params = [
 				'login' => htmlspecialchars($login),
 				'password' => password_hash($password, PASSWORD_BCRYPT),
 				'email' => htmlspecialchars($email),
 				'firstname' => htmlspecialchars($firstname),
 				'lastname' => htmlspecialchars($lastname)
-			]);
+			];
+			$result = $stmt->execute($params);
 			if ($result) {
-				return $this->getAllInfos($this->pdo->lastInsertId());
+				$params = ['id' => $this->pdo->lastInsertId()];
+				return $params;
 			}
 			else {
 				throw new Exception('Registration failed.');
@@ -131,11 +133,14 @@ class Userpdo {
 		return isset($this->id);
 	}
 
-	public function getAllInfos($id = null) {
-		$id = $id ?? $this->id;
-		$stmt = $this->pdo->prepare('SELECT * FROM `utilisateurs` WHERE `id` = :id');
-		$stmt->execute(['id' => $id]);
-		return $stmt->fetch();
+	public function getAllInfos() {
+		return [
+			'id' => $this->id,
+			'login' => $this->login,
+			'email' => $this->email,
+			'firstname' => $this->firstname,
+			'lastname' => $this->lastname
+		];
 	}
 
 	public function getLogin() {
@@ -154,4 +159,8 @@ class Userpdo {
 		return $this->lastname;
 	}
 }
+
+
+$user = new Userpdo();
+var_dump($user->register('test4', 'password', 'test@email.com', 'Test', 'User'));
 ?>
