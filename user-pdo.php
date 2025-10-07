@@ -6,9 +6,20 @@ class Userpdo {
 	public $email;
 	public $firstname;
 	public $lastname;
+	public $pdo;
 
 	public function __construct() {
-			// code...
+		try {
+			$dsn = "mysql:host=localhost;dbname=classes;charset=" . DB_CHARSET;
+			$options = [
+				PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+				PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+				PDO::ATTR_EMULATE_PREPARES => false,
+			];
+			$this->pdo = new PDO($dsn, 'root', '', $options);
+		} catch (PDOException $e) {
+			die("Erreur de connexion à la base de données : " . $e->getMessage());
+		}
 	}
 
 	public function register($login, $password, $email, $firstname, $lastname) {
