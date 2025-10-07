@@ -34,6 +34,9 @@ class User {
 	}
 
 	public function connect($login, $password) {
+		if ($this->isConnected()) {
+			throw new Exception('User already connected.');
+		}
 		$result = mysqli_query($this->db, 'SELECT * FROM `utilisateurs` WHERE `login` = "'.htmlspecialchars($login).'"');
 		if (mysqli_num_rows($result) == 1) {
 			$user = mysqli_fetch_assoc($result);
@@ -128,7 +131,4 @@ class User {
 		return $this->lastname;
 	}
 }
-
-$user = new User();
-$user->register('test', 'password', 'test@email.com', 'Test', 'User');
 ?>
