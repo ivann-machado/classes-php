@@ -89,8 +89,6 @@
 			}
 		}
 
-		}
-
 		public function isConnected() {
 			return isset($this->id);
 		}
