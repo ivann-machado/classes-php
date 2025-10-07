@@ -23,10 +23,47 @@ class Userpdo {
 	}
 
 	public function register($login, $password, $email, $firstname, $lastname) {
+		$stmt = $this->pdo->prepare('SELECT * FROM `utilisateurs` WHERE `login` = :login');
+		$stmt->execute(['login' => htmlspecialchars($login)]);
+		if ($stmt->rowCount() > 0) {
+			throw new Exception('Login already taken.');
+		}
+		else {
+			$stmt = $this->pdo->prepare('INSERT INTO `utilisateurs` (`login`, `password`, `email`, `firstname`, `lastname`) VALUES (:login, :password, :email, :firstname, :lastname)');
+			$result = $stmt->execute([
+				'login' => htmlspecialchars($login),
+				'password' => password_hash($password, PASSWORD_BCRYPT),
+				'email' => htmlspecialchars($email),
+				'firstname' => htmlspecialchars($firstname),
+				'lastname' => htmlspecialchars($lastname)
+			]);
+			if ($result) {
+				return $this->getAllInfos($this->pdo->lastInsertId());
+			}
+			else {
+				throw new Exception('Registration failed.');
+			}
+		}
 
 	}
 
 	public function connect($login, $password) {
+		if ($this->isConnected()) {
+			throw new Exception('User already connected.');
+		}
+		$stmt = $this->pdo->prepare('SELECT * FROM `utilisateurs` WHERE `login` = :login');
+		$stmt->execute(['login' => htmlspecialchars($login)]);
+		$user = $stmt->fetch();
+		if ($user && password_verify($password, $user['password'])) {
+			$this->id = $user['id'];
+			$this->login = $user['login'];
+			$this->email = $user['email'];
+			$this->firstname = $user['firstname'];
+			$this->lastname = $user['lastname'];
+			return true;
+		} else {
+			throw new Exception('Incorrect login or password.');
+		}
 
 	}
 
@@ -39,8 +76,14 @@ class Userpdo {
 	}
 
 	public function delete() {
-
-		$this->disconnect();
+		$stmt = $this->pdo->prepare('DELETE FROM `utilisateurs` WHERE `id` = :id');
+		$stmt->execute(['id' => $this->id]);
+		if ($stmt->rowCount() == 0) {
+			throw new Exception('User not found or already deleted.');
+		}
+		if ($this->isConnected()) {
+			$this->disconnect();
+		}
 	}
 
 	public function update($login, $password = null, $email = null, $firstname = null, $lastname = null) {
