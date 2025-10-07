@@ -62,7 +62,33 @@
 		}
 
 		public function update($login, $password = null, $email = null, $firstname = null, $lastname = null) {
-			// code...
+			$fields = [];
+			if ($login !== null) {
+				$fields[] = '`login` = "'.htmlspecialchars($login).'"';
+			}
+			if ($password !== null) {
+				$fields[] = '`password` = "'.password_hash($password, PASSWORD_BCRYPT).'"';
+			}
+			if ($email !== null) {
+				$fields[] = '`email` = "'.htmlspecialchars($email).'"';
+			}
+			if ($firstname !== null) {
+				$fields[] = '`firstname` = "'.htmlspecialchars($firstname).'"';
+			}
+			if ($lastname !== null) {
+				$fields[] = '`lastname` = "'.htmlspecialchars($lastname).'"';
+			}
+			if (!empty($fields)) {
+				$query = 'UPDATE `users` SET '.implode(', ', $fields).' WHERE `id` = "'.$this->id.'"';
+				if (mysqli_query($db, $query)) {
+					$this->login = $login;
+					$this->email = $email;
+					$this->firstname = $firstname;
+					$this->lastname = $lastname;
+				}
+			}
+		}
+
 		}
 
 		public function isConnected() {
