@@ -26,9 +26,17 @@ class User {
 			throw new Exception('Login already taken.');
 		}
 		else {
-			$query = 'INSERT INTO `utilisateurs` (`login`, `password`, `email`, `firstname`, `lastname`) VALUES ("'.htmlspecialchars($login).'", "'.password_hash($password, PASSWORD_BCRYPT).'", "'.htmlspecialchars($email).'", "'.htmlspecialchars($firstname).'", "'.htmlspecialchars($lastname).'")';
+			$pw = password_hash($password, PASSWORD_BCRYPT);
+			$query = 'INSERT INTO `utilisateurs` (`login`, `password`, `email`, `firstname`, `lastname`) VALUES ("'.htmlspecialchars($login).'", "'.$pw.'", "'.htmlspecialchars($email).'", "'.htmlspecialchars($firstname).'", "'.htmlspecialchars($lastname).'")';
 			if (mysqli_query($this->db, $query)) {
-				return $this->getAllInfos(mysqli_insert_id($this->db));
+				return [
+					'id' => mysqli_insert_id($this->db),
+					'login' => $login,
+					'password' => $pw,
+					'email' => $email,
+					'firstname' => $firstname,
+					'lastname' => $lastname
+				];
 			}
 		}
 	}
@@ -105,15 +113,14 @@ class User {
 		return isset($this->id);
 	}
 
-	public function getAllInfos($id = null) {
-		$id = $id ?? $this->id;
-		$result = mysqli_query($this->db, 'SELECT * FROM `utilisateurs` WHERE `id` = "'.htmlspecialchars($id).'"');
-		if (mysqli_num_rows($result) == 1) {
-			return mysqli_fetch_assoc($result);
-		}
-		else {
-			throw new Exception('User not found.');
-		}
+	public function getAllInfos() {
+		return [
+			'id' => $this->id,
+			'login' => $this->login,
+			'email' => $this->email,
+			'firstname' => $this->firstname,
+			'lastname' => $this->lastname
+		];
 	}
 
 	public function getLogin() {
