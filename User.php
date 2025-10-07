@@ -8,7 +8,14 @@
 		public $lastname;
 
 		public function __construct() {
-			// code...
+			if (isset($_SESSION['user_id'])) {
+				$user = $this->getAllInfos($_SESSION['user_id']);
+				$this->id = $user['id'];
+				$this->login = $user['login'];
+				$this->email = $user['email'];
+				$this->firstname = $user['firstname'];
+				$this->lastname = $user['lastname'];
+			}
 		}
 
 		public function register($login, $password, $email, $firstname, $lastname) {
