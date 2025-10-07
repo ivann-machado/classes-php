@@ -26,7 +26,7 @@ class User {
 			throw new Exception('Login already taken.');
 		}
 		else {
-			$query = 'INSERT INTO `users` (`login`, `password`, `email`, `firstname`, `lastname`) VALUES ("'.htmlspecialchars($login).'", "'.password_hash($password, PASSWORD_BCRYPT).'", "'.htmlspecialchars($email).'", "'.htmlspecialchars($firstname).'", "'.htmlspecialchars($lastname).'")';
+			$query = 'INSERT INTO `utilisateurs` (`login`, `password`, `email`, `firstname`, `lastname`) VALUES ("'.htmlspecialchars($login).'", "'.password_hash($password, PASSWORD_BCRYPT).'", "'.htmlspecialchars($email).'", "'.htmlspecialchars($firstname).'", "'.htmlspecialchars($lastname).'")';
 			if (mysqli_query($this->db, $query)) {
 				return getAllInfos(mysqli_insert_id($this->db));
 			}
@@ -34,7 +34,7 @@ class User {
 	}
 
 	public function connect($login, $password) {
-		$result = mysqli_query($this->db, 'SELECT * FROM `users` WHERE `login` = "'.htmlspecialchars($login).'"');
+		$result = mysqli_query($this->db, 'SELECT * FROM `utilisateurs` WHERE `login` = "'.htmlspecialchars($login).'"');
 		if (mysqli_num_rows($result) == 1) {
 			$user = mysqli_fetch_assoc($result);
 			if (password_verify($password, $user['password'])) {
@@ -64,12 +64,12 @@ class User {
 	}
 
 	public function delete() {
-		if (mysqli_query($this->db, 'DELETE FROM `users` WHERE `id` = "'.$this->id.'"')) {
+		if (mysqli_query($this->db, 'DELETE FROM `utilisateurs` WHERE `id` = "'.$this->id.'"')) {
 			$this->disconnect();
 		}
 	}
 
-	public function update($login, $password = null, $email = null, $firstname = null, $lastname = null) {
+	public function update($login = null, $password = null, $email = null, $firstname = null, $lastname = null) {
 		$fields = [];
 		if ($login !== null) {
 			$fields[] = '`login` = "'.htmlspecialchars($login).'"';
@@ -87,7 +87,7 @@ class User {
 			$fields[] = '`lastname` = "'.htmlspecialchars($lastname).'"';
 		}
 		if (!empty($fields)) {
-			$query = 'UPDATE `users` SET '.implode(', ', $fields).' WHERE `id` = "'.$this->id.'"';
+			$query = 'UPDATE `utilisateurs` SET '.implode(', ', $fields).' WHERE `id` = "'.$this->id.'"';
 			if (mysqli_query($this->db, $query)) {
 				$this->login = $login;
 				$this->email = $email;
@@ -103,7 +103,7 @@ class User {
 
 	public function getAllInfos($id = null) {
 		$id = $id ?? $this->id;
-		$result = mysqli_query($this->db, 'SELECT * FROM `users` WHERE `id` = "'.htmlspecialchars($id).'"');
+		$result = mysqli_query($this->db, 'SELECT * FROM `utilisateurs` WHERE `id` = "'.htmlspecialchars($id).'"');
 		if (mysqli_num_rows($result) == 1) {
 			return mysqli_fetch_assoc($result);
 		}
